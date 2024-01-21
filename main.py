@@ -1,11 +1,12 @@
 from pygame import*
+from time import sleep
 back = (100, 100, 100)
 win_height = 500
 win_width = 600
 window = display.set_mode((win_width, win_height))
 window.fill(back)
 
-
+background = transform.scale(image.load('NJG.png'), (200, 200))
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_speed, player_x, player_y, player_scale_x, player_scale_y):
         super().__init__()
@@ -35,8 +36,8 @@ class Player(GameSprite):
         if keys[K_DOWN] and self.rect.y< win_height - 80:
             self.rect.y += self.speed
 
-rocket2 = Player('pngegg.png', 4, 30,200,100,200)
-rocket1 = Player('bmw cdth[e.png',4, 500,200,100,200)
+rocket2 = Player('pngegg.png', 4, 30,200,95,200)
+rocket1 = Player('bmw cdth[e.png',6, 500,200,100,200)
 ball = Player("watanabe-rs-r15-16-8j-et25-4-bronze-1.png",4, 200, 300 , 60,60)
 
 
@@ -50,18 +51,24 @@ game = True
 speed_x = 3
 speed_y = 3
 
+point1 = 0
+point2 = 0
+
 
 font.init()
 font = font.Font(None, 35)
 lose1 = font.render('kanjoo1 проиграл', True, (180, 0 ,0))
 lose2 = font.render('kanjoo2 проиграл', True, (180, 0 ,0))
+point_text = font.render('счет:    '+str(point1)+' : '+ str(point2), True, (255,255,255))
 while game:
     for e in event.get():
         if e.type == QUIT:
             game= False
-
+    
     if finish != True:
         window.fill(back)
+        window.blit(background, (200,50))
+
         rocket1.update_l()
         rocket2.update_r()
         ball.rect.x += speed_x
@@ -78,11 +85,17 @@ while game:
 
         if ball.rect.x > 600:
             finish = True
-            window.blit(lose1,(200,200))
+            window.blit(lose2,(200,200))
             game_over = True
+
+        if sprite.collide_rect(rocket1,ball):
+            point1+=1
+        if sprite.collide_rect(rocket2,ball):
+            point2+=1
         rocket1.reset()
         rocket2.reset()
         ball.reset()
+        window.blit(point_text, (150, 5))
 
     display.update()
     clock.tick(FPS)
